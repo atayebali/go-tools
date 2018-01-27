@@ -47,20 +47,25 @@ func parallelLs(dirPaths []string) {
 	sliceLength := len(dirPaths)
 	var wg sync.WaitGroup
 	wg.Add(sliceLength)
-
-	fmt.Println("Running for Ls...")
-
 	for i := 0; i < sliceLength; i++ {
 		go func(i int) {
 			defer wg.Done()
 			
 			cmd := exec.Command("git", "status")
+			cmd1 := exec.Command("git", "rev-parse", "HEAD")
 			cmd.Dir = dirPaths[i]
+			cmd1.Dir = dirPaths[i]
+			sha, err2 := cmd1.Output()
 			out, err := cmd.Output()
 			if err != nil {
 				fmt.Println(err)
 			}
-			fmt.Printf("The dir is %s\n", out)
+			if err2 != nil {
+				fmt.Println(err2)
+			}
+
+
+			fmt.Printf("The repo at %s is %s\n with sha @ %s", dirPaths[i], out, sha)
 		}(i)
 	}
 	wg.Wait()
