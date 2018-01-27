@@ -53,9 +53,12 @@ func parallelLs(dirPaths []string) {
 	for i := 0; i < sliceLength; i++ {
 		go func(i int) {
 			defer wg.Done()
-			out, err := exec.Command("ls", "-la", dirPaths[i]).Output()
+			
+			cmd := exec.Command("git", "status")
+			cmd.Dir = dirPaths[i]
+			out, err := cmd.Output()
 			if err != nil {
-				panic(err)
+				fmt.Println(err)
 			}
 			fmt.Printf("The dir is %s\n", out)
 		}(i)
