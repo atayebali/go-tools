@@ -2,6 +2,7 @@ package main
 
 import (
 	"sync"
+	"fmt"
 )
 
 func parallelLs(dirPaths []string) {
@@ -18,9 +19,15 @@ func parallelLs(dirPaths []string) {
 }
 
 func main() {
-	
-	lines, serr := readLines(".data")
-	check(serr)
-	dirPaths := filePaths(lines)
-	parallelLs(dirPaths)
+	input := parse()
+	fmt.Println(input.branch)
+	fmt.Println(input.repos)
+
+	for _, repo := range input.repos {
+		fmt.Println(repo)
+	}
+	// lines, serr := readLines(".data")
+	// check(serr)
+	// dirPaths := filePaths(lines)
+	// parallelLs(dirPaths)
 }

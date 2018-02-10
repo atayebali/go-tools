@@ -44,12 +44,22 @@ func switchToBranch(opts RepoOpts){
  Pulls master from orgin
 */
 func pullMaster(opts RepoOpts){
-
+	r, err := git.PlainOpen(opts.path)
+	CheckIfError(err)
+	
+	w, err := r.Worktree()
+	CheckIfError(err)
+	
+	Info("git pull origin")
+	err = w.Pull(&git.PullOptions{RemoteName: "origin"})
+	CheckIfError(err)
 }
 
 
 func runGit(dirPaths []string, i int) {
-	stashIt(RepoOpts{path: dirPaths[i]})
-	switchToBranch(RepoOpts{path: dirPaths[i], branch: "Master"})
+	opts := RepoOpts{path: dirPaths[i], branch: "Master"}
+	stashIt(opts)
+	switchToBranch(opts)
+	pullMaster(opts)
 
 }
