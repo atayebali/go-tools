@@ -26,8 +26,8 @@ func main() {
 	for _, repo := range input.repos {
 		fmt.Println(repo)
 	}
-	// lines, serr := readLines(".data")
-	// check(serr)
-	// dirPaths := filePaths(lines)
-	// parallelLs(dirPaths)
+	lines, serr := readLines(".data")
+	check(serr)
+	dirPaths := filePaths(lines)
+	parallelLs(dirPaths)
 }
