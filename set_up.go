@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"sync"
 	"os/user"
+	"sync"
 )
 
 const FRONTEND_APPS_PATH = "/FRONT_END_APPS"
@@ -20,14 +20,13 @@ func getUserDir() string {
 	return path
 }
 
-func setupDir(){
+func setupDir() {
 	path := getUserDir()
 	fmt.Println(path + FRONTEND_APPS_PATH)
 	if _, err := os.Stat(path + FRONTEND_APPS_PATH); os.IsNotExist(err) {
 		fmt.Println("Creating dir")
-		err := os.MkdirAll(path + FRONTEND_APPS_PATH, 0755)
+		err := os.MkdirAll(path+FRONTEND_APPS_PATH, 0755)
 		check(err)
-
 	}
 	fmt.Println("Setup is complete....")
 }
@@ -44,8 +43,6 @@ func cloneRepos() {
 	}
 	wg.Wait()
 }
-
-
 
 func setUp() {
 	setupDir()
