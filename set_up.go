@@ -3,15 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"os/user"
 	"sync"
 )
-
-const FRONTEND_APPS_PATH = "/FRONT_END_APPS"
-
-var gitHubProjects = []string{
-	"git@github.com:rtyley/small-test-repo.git",
-	"git@github.com:kelseyhightower/nocode.git"}
 
 func getUserDir() string {
 	user, err := user.Current()
@@ -21,30 +16,42 @@ func getUserDir() string {
 }
 
 func setupDir() {
-	path := getUserDir()
-	fmt.Println(path + FRONTEND_APPS_PATH)
-	if _, err := os.Stat(path + FRONTEND_APPS_PATH); os.IsNotExist(err) {
+	homePath := getUserDir()
+	path := homePath + FRONTEND_APPS_PATH
+	if _, err := os.Stat(path); os.IsNotExist(err) {
 		fmt.Println("Creating dir")
-		err := os.MkdirAll(path+FRONTEND_APPS_PATH, 0755)
-		check(err)
+		err := os.MkdirAll(path, 0755)
+		check(err)		
+	} else {
+		fmt.Println("Dirs Created....already Exiting.")
+		os.Exit(0)
 	}
-	fmt.Println("Setup is complete....")
 }
+
+/*
+Clones all the repos into  FRONTEND_APPS_PATH cds user into the dir of choice.
+*/
 
 func cloneRepos() {
 	sliceLength := len(gitHubProjects)
+	homePath := getUserDir()
+	path := homePath + FRONTEND_APPS_PATH
 	var wg sync.WaitGroup
 	wg.Add(sliceLength)
 	for i := 0; i < sliceLength; i++ {
 		go func(i int) {
 			defer wg.Done()
-			fmt.Println(gitHubProjects[i])
+			fmt.Println("Git Cloning ", gitHubProjects[i])
+			cmd := exec.Command("git", "clone", gitHubProjects[i])
+			cmd.Dir = path
+			_, err := cmd.Output()
+			check(err)
 		}(i)
 	}
 	wg.Wait()
 }
 
 func setUp() {
-	setupDir()
+	setupDir()	
 	cloneRepos()
 }

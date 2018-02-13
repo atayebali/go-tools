@@ -13,21 +13,20 @@ type Input struct {
 	repos  []string
 }
 
-const REPOS = "PT,SC,TW,FB,SG,CT"
 
 func parse() Input {
 	setupStr := flag.String("setup", FRONTEND_APPS_PATH, "(Optional) Sets up the FRONT_END_APPS dir in your Home Dir")
-	branchStr := flag.String("branch", "", " (Required) Name of the branch for the new feature")
-	reposStr := flag.String("repos", REPOS, "(Optional) Pass in using CSV style")
+	branchStr := flag.String("branch", "-1", "(Required) Name of the branch for the new feature")
+	reposStr := flag.String("repos", "SH", "(Optional) Pass in using CSV style")
 	flag.Parse()
 
-	if *setupStr == "" {
+	if *setupStr != FRONTEND_APPS_PATH {
 		fmt.Println("Setting up Projects at default")
 		setUp()
-		os.Exit(0)
+		os.Exit(0)		
 	}
 
-	if *branchStr == "" {
+	if *branchStr == "-1" {		
 		fmt.Println("Need to pass branch name or else I fail!")
 		os.Exit(1)
 	}
@@ -39,5 +38,4 @@ func parse() Input {
 	}
 	input := Input{branch: *branchStr, repos: repos}
 	return input
-
 }
