@@ -2,6 +2,8 @@ package main
 
 import (
 	"sync"
+	"fmt"
+	"os/exec"
 )
 
 func preBranchWorker(wg *sync.WaitGroup, path string) {
@@ -16,16 +18,23 @@ func preBranchingSteps(path string) {
 	pullMaster(opts)
 }
 
-func gitBranchWorker(paths []string, branch string) {
-	var wg sync.WaitGroup
-	for _, path := range paths {
-		wg.Add(1)
-		go func(path string) {
-			defer wg.Done()
-			gitBranch(RepoOpts{path: path, branch: branch})
-		}(path)
+func gitBranchWorker(wg *sync.WaitGroup, opts RepoOpts) {
+	defer wg.Done()	
+	gitBranch(opts)
+}
+
+func gitBranch(opts RepoOpts){
+	cmd := exec.Command("git", "checkout", "-b", opts.branch)
+	cmd.Dir = opts.path
+	_, err := cmd.Output()
+
+	if (err != nil) && (string(err.Error()) == "exit status 128") {
+		cmd := exec.Command("git", "checkout", opts.branch)
+		cmd.Dir = opts.path
+		_, err := cmd.Output()
+		check(err)
 	}
-	wg.Wait()
+	fmt.Println("New branch created in " + opts.path + "for " + opts.branch)
 }
 
 func gitPushWorker(paths []string, branch string) {

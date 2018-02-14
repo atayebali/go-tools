@@ -19,18 +19,23 @@ type RepoOpts struct {
 */
 
 func cutBranchAndPush(input Input) {
-	// branch := input.branch
+	branch := input.branch
 	repos := input.repos
 
 	paths := repoToPath(repos)
-
+	projects := len(paths)
 	var wg sync.WaitGroup	
-	for _, path := range paths {
-		wg.Add(1)
+	wg.Add(projects)
+	for _, path := range paths {		
 		go preBranchWorker(&wg, path)
 	}
 	wg.Wait()
 	
+	wg.Add(projects)
+	for _, path := range paths {		
+		go gitBranchWorker(&wg, RepoOpts{path: path, branch: branch} )
+	}
+	wg.Wait()
 
 		//gitBranchWorker(paths, branch)
 	// gitPushWorker(paths, branch)
@@ -60,19 +65,7 @@ func switchToBranch(opts RepoOpts) {
 	fmt.Println("Switching to master for " + opts.path)
 }
 
-func gitBranch(opts RepoOpts) {
-	cmd := exec.Command("git", "checkout", "-b", opts.branch)
-	cmd.Dir = opts.path
-	_, err := cmd.Output()
 
-	if string(err.Error()) == "exit status 128" {
-		cmd := exec.Command("git", "checkout", opts.branch)
-		cmd.Dir = opts.path
-		_, err := cmd.Output()
-		CheckIfError(err)
-	}
-	fmt.Println("New branch created: " + opts.branch)
-}
 
 /*
  args: path

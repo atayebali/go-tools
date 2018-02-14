@@ -14,9 +14,7 @@ func check(e error) {
 
 func readLines(path string) ([]string, error) {
 	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
+	check(err)
 	defer file.Close()
 
 	var lines []string
