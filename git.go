@@ -18,8 +18,26 @@ type RepoOpts struct {
  Moves contents into stash so that changes on a dirty branch are not lost
 */
 
+func cutBranchAndPush(input Input) {
+	// branch := input.branch
+	repos := input.repos
+
+	paths := repoToPath(repos)
+
+	var wg sync.WaitGroup	
+	for _, path := range paths {
+		wg.Add(1)
+		go preBranchWorker(&wg, path)
+	}
+	wg.Wait()
+	
+
+		//gitBranchWorker(paths, branch)
+	// gitPushWorker(paths, branch)
+}
+
 func stashIt(opts RepoOpts) {
-	cmd := exec.Command("git", "stash")
+	cmd := exec.Command("git", "stash", "save", "-u")
 	cmd.Dir = opts.path
 	_, err := cmd.Output()
 	CheckIfError(err)
@@ -39,14 +57,21 @@ func switchToBranch(opts RepoOpts) {
 
 	err1 := w.Checkout(&git.CheckoutOptions{})
 	CheckIfError(err1)
+	fmt.Println("Switching to master for " + opts.path)
 }
 
-func gitBranch(opts RepoOpts){
+func gitBranch(opts RepoOpts) {
 	cmd := exec.Command("git", "checkout", "-b", opts.branch)
 	cmd.Dir = opts.path
 	_, err := cmd.Output()
-	CheckIfError(err)
-	fmt.Println("New branch created: " +  opts.branch)
+
+	if string(err.Error()) == "exit status 128" {
+		cmd := exec.Command("git", "checkout", opts.branch)
+		cmd.Dir = opts.path
+		_, err := cmd.Output()
+		CheckIfError(err)
+	}
+	fmt.Println("New branch created: " + opts.branch)
 }
 
 /*
@@ -58,41 +83,18 @@ func pullMaster(opts RepoOpts) {
 	cmd.Dir = opts.path
 	_, err := cmd.Output()
 	CheckIfError(err)
-	fmt.Println("Pulled in Master: " +  opts.branch)
+	fmt.Println("Pulled in Master: for " + opts.path)
 }
 
-func preBranchingSteps(path string) {
-	opts := RepoOpts{path: path, branch: "Master"}
-	stashIt(opts)
-	switchToBranch(opts)
-	pullMaster(opts)
+func gitPush(opts RepoOpts) {
+	cmd := exec.Command("git", "push", "origin", opts.branch)
+	cmd.Dir = opts.path
+	_, err := cmd.Output()
+	CheckIfError(err)
+	fmt.Println("Pushed to github: " + opts.branch)
 }
 
-func cutBranch(input Input) {
-	branch := input.branch
-	repos := input.repos
 
-	paths := repoToPath(repos)
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	for _, path := range paths {
-		go func(path string) {
-			defer wg.Done()
-			preBranchingSteps(path)			
-		}(path)		
-	}
-	wg.Wait()
-
-	wg.Add(1)
-	for _, path := range paths {
-		go func(path string) {
-			defer wg.Done()			
-			gitBranch(RepoOpts{path: path, branch: branch})
-		}(path)		
-	}
-	wg.Wait()
-}
 
 func repoToPath(repoKeys []string) []string {
 	var paths []string
@@ -100,12 +102,12 @@ func repoToPath(repoKeys []string) []string {
 	for _, repoKey := range repoKeys {
 		if val, ok := REPOS_DIRS_MAP[repoKey]; ok {
 			if ok {
-				fullPath := baseDir + "/" + val	
+				fullPath := baseDir + "/" + val
 				paths = append(paths, fullPath)
 			} else {
-				fmt.Println("No Repo for " + repoKey )		
+				fmt.Println("No Repo for " + repoKey)
 			}
 		}
-	}			
+	}
 	return paths
 }
