@@ -37,14 +37,16 @@ func gitBranch(opts RepoOpts){
 	fmt.Println("New branch created in " + opts.path + "for " + opts.branch)
 }
 
-func gitPushWorker(paths []string, branch string) {
-	var wp sync.WaitGroup
-	for _, path := range paths {
-		wp.Add(1)
-		go func(path string) {
-			defer wp.Done()
-			gitPush(RepoOpts{path: path, branch: branch})
-		}(path)
-	}
-	wp.Wait()
+func gitPushWorker(wg *sync.WaitGroup, opts RepoOpts) {
+	defer wg.Done()
+	gitPush(opts)
+}
+
+func gitPush(opts RepoOpts) {
+	cmd := exec.Command("git", "push", "origin", opts.branch)
+	cmd.Dir = opts.path
+	fmt.Println("Pushing to github: " + opts.branch)
+	_, err := cmd.Output()
+	check(err)
+	
 }

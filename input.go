@@ -11,10 +11,12 @@ import (
 type Input struct {
 	branch string
 	repos  []string
+	command string
 }
 
 
 func parse() Input {
+	//commandStr := flagString("")
 	setupStr := flag.String("setup", FRONTEND_APPS_PATH, "(Optional) Sets up the FRONT_END_APPS dir in your Home Dir")
 	branchStr := flag.String("branch", "-1", "(Required) Name of the branch for the new feature")
 	reposStr := flag.String("repos", "SH", "(Optional) Pass in using CSV style")

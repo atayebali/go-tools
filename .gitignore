@@ -4,3 +4,4 @@ pr-spin
 .d*
 .vscode
 constants.go
+.github
