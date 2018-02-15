@@ -6,13 +6,7 @@ func main() {
 
 	//Cut Branches off master
 	cutBranchAndPush(input)
-
-	// for _, repo := range input.repos {
-	// 	fmt.Println(repo)
-	// }
-	// // lines, serr := readLines(".data")
-	// check(serr)
-
-	// dirPaths := filePaths(lines)
-	// parallelLs(dirPaths)
+	
+	//Prep Shell App
+	updateShellApp(input)
 }
