@@ -17,7 +17,7 @@ func getUserDir() string {
 
 func setupDir() {
 	homePath := getUserDir()
-	path := homePath + FRONTEND_APPS_PATH
+	path := homePath + FRONTEND_APPS_BASE_DIR
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		fmt.Println("Creating dir")
 		err := os.MkdirAll(path, 0755)
@@ -28,14 +28,18 @@ func setupDir() {
 	}
 }
 
+func frontEndAppFullPath() string {
+	return (getUserDir() + FRONTEND_APPS_BASE_DIR)
+}
+
 /*
-Clones all the repos into  FRONTEND_APPS_PATH cds user into the dir of choice.
+Clones all the repos into  FRONTEND_APPS_BASE_DIR cds user into the dir of choice.
 */
 
 func cloneRepos() {
 	sliceLength := len(gitHubProjects)
 	homePath := getUserDir()
-	path := homePath + FRONTEND_APPS_PATH
+	path := homePath + FRONTEND_APPS_BASE_DIR
 	var wg sync.WaitGroup
 	wg.Add(sliceLength)
 	for i := 0; i < sliceLength; i++ {

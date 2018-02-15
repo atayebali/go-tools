@@ -48,7 +48,7 @@ func pullMaster(opts RepoOpts) {
 
 func repoToPath(repoKeys []string) []string {
 	var paths []string
-	baseDir := getUserDir() + FRONTEND_APPS_PATH
+	baseDir := getUserDir() + FRONTEND_APPS_BASE_DIR
 	for _, repoKey := range repoKeys {
 		if val, ok := REPOS_DIRS_MAP[repoKey]; ok {
 			if ok {
