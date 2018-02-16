@@ -46,7 +46,7 @@ func gitPush(opts RepoOpts) {
 	cmd := exec.Command("git", "push", "origin", opts.branch)
 	cmd.Dir = opts.path
 	fmt.Println("Pushing to github: " + opts.branch)
-	// _, err := cmd.Output()
-	// check(err)
+	 _, err := cmd.Output()
+	 check(err)
 	
 }

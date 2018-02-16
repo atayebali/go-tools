@@ -8,12 +8,6 @@ import (
 	"strings"
 )
 
-type Input struct {
-	branch string
-	repos  []string
-	command string
-}
-
 
 func parse() Input {
 	//commandStr := flagString("")
@@ -24,17 +18,17 @@ func parse() Input {
 	flag.Parse()
 
 	if *packStr {
-		updatePackageJSON("/Users/anistayebali/FRONT_END_APPS/hyfn8_front_end_app", "feature/thing10", "TW")
+		runYarnCommands()
 		os.Exit(0)
 	}
 
 	if *setupStr != FRONTEND_APPS_BASE_DIR {
 		fmt.Println("Setting up Projects at default")
 		setUp()
-		os.Exit(0)		
+		os.Exit(0)
 	}
 
-	if *branchStr == "-1" {		
+	if *branchStr == "-1" {
 		fmt.Println("Need to pass branch name or else I fail!")
 		os.Exit(1)
 	}
@@ -44,6 +38,7 @@ func parse() Input {
 	if err != nil {
 		os.Exit(1)
 	}
+
 	input := Input{branch: *branchStr, repos: repos}
 	return input
 }

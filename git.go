@@ -4,11 +4,6 @@ import (
 	"sync"
 )
 
-type RepoOpts struct {
-	path   string
-	branch string
-}
-
 /*
  args: Takes a dir path
  Moves contents into stash so that changes on a dirty branch are not lost
@@ -38,5 +33,4 @@ func cutBranchAndPush(input Input) {
 		go gitPushWorker(&wg, RepoOpts{path: path, branch: branch})
 	}
 	wg.Wait()
-	// gitPushWorker(paths, branch)
 }

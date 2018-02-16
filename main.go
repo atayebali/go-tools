@@ -9,4 +9,11 @@ func main() {
 	
 	//Prep Shell App
 	updateShellApp(input)
+
+	//Run Yarn Commands
+	runYarnCommands()
+
+	//Push Shell App
+	gitPushShellApp(input)
 }
+
