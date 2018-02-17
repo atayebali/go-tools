@@ -42,11 +42,12 @@ func gitPushWorker(wg *sync.WaitGroup, opts RepoOpts) {
 	gitPush(opts)
 }
 
-func gitPush(opts RepoOpts) {
-	cmd := exec.Command("git", "push", "origin", opts.branch)
-	cmd.Dir = opts.path
-	fmt.Println("Pushing to github: " + opts.branch)
-	 _, err := cmd.Output()
-	 check(err)
-	
+func gitCommitWorker(wg *sync.WaitGroup, message string, path string) {
+	defer wg.Done()
+	gitCommit(message, path)
+}
+
+func gitHubWorker(wg *sync.WaitGroup, opts RepoOpts) {
+	defer wg.Done()
+	spinUpPr(opts)
 }

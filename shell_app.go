@@ -86,20 +86,8 @@ func findLine(file []string, packageName string, branch string) []string {
 }
 
 func gitPushShellApp(input Input) {
-	branch := input.branch
-	gitAdd := exec.Command("git", "add", ".")
-	gitAdd.Dir = shellPath
-
-	_, err := gitAdd.Output()
-	check(err)
-
-	message := "Commit for feature " + branch
-	gitCommit := exec.Command("git", "commit", "-am", message)
-	gitCommit.Dir = shellPath
-
-	_, err1 := gitCommit.Output()
-	check(err1)
-
-	opts := RepoOpts{path: shellPath, branch: branch}
+	message := "Commit for feature " + input.branch
+	gitCommit(message, shellPath)
+	opts := RepoOpts{path: shellPath, branch: input.branch}
 	gitPush(opts)
 }
