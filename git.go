@@ -1,8 +1,8 @@
 package main
 
 import (
-	"sync"
 	"fmt"
+	"sync"
 )
 
 /*
@@ -50,9 +50,15 @@ func commitAndPush(input Input) {
 	}
 	wg.Wait()
 
+	wg.Add(projects)
+	for _, path := range paths {
+		go gitPushWorker(&wg, RepoOpts{path: path, branch: branch})
+	}
+	wg.Wait()
+
 }
 
-func generatePrs(input Input) {	
+func generatePrs(input Input) {
 	fmt.Println(input)
 	branch := input.branch
 	repos := input.repos

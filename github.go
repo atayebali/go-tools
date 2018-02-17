@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"io/ioutil"
 	"fmt"
 	"net/http"
 	"os"
@@ -35,5 +36,6 @@ func spinUpPr(opts RepoOpts) {
 	res, err := client.Do(req)
 	check(err)
 
-	fmt.Println("Code: " + res.Status)
+	body, err := ioutil.ReadAll(res.Body)
+	fmt.Println(string(body)) 
 }
