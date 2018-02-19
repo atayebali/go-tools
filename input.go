@@ -13,15 +13,20 @@ func parse() Input {
 	//prStr := flag.Bool("pr", false, "for testing purposes will run gh pr generation")
 
 	input := Input{branch: "", repos: nil}
-	createFeatureStr := flag.Bool("make-feature", false, "build a feature today!")
-	commitFeatureStr := flag.Bool("push-feature", false, "push changes to github")
-	setupStr := flag.String("setup", FRONTEND_APPS_BASE_DIR, "(Optional) Sets up the FRONT_END_APPS dir in your Home Dir")
+	// createFeatureStr := flag.Bool("make-feature", false, "build a feature today!")
+	// commitFeatureStr := flag.Bool("push-feature", false, "push changes to github")
+	// setupStr := flag.String("setup", FRONTEND_APPS_BASE_DIR, "(Optional) Sets up the FRONT_END_APPS dir in your Home Dir")
 	//branchStr := flag.String("branch", "-1", "(Required) Name of the branch for the new feature")
 	//reposStr := flag.String("repos", "SH", "(Optional) Pass in using CSV style")
 
+	//Create Feature Command Set
 	createFeatureCommand := flag.NewFlagSet("make-feature", flag.ExitOnError)
-	branchStr := createFeatureCommand.String("branch", "-1", "(Required) Name of the branch for the new feature")
-	reposStr := createFeatureCommand.String("repos", "SH", "(Optional) Pass in using CSV style")
+	createBranchStr := createFeatureCommand.String("branch", "-1", "(Required) Name of the branch for the new feature")
+	createReposStr := createFeatureCommand.String("repos", "SH", "(Optional) Pass in using CSV style")
+
+	commitFeatureCommand := flag.NewFlagSet("push-feature", flag.ExitOnError)
+	commitBranchStr := commitFeatureCommand.String("branch", "-1", "(Required) Name of the branch for the new feature")
+	commitReposStr := commitFeatureCommand.String("repos", "SH", "(Optional) Pass in using CSV style")
 
 	// flag.Parse()
 
@@ -31,25 +36,25 @@ func parse() Input {
 	}
 
 	switch os.Args[1] {
+	case "setup":
+		setUp()
+		os.Exit(0)
 	case "make-feature":
 		createFeatureCommand.Parse(os.Args[2:])
 	case "push-feature":
-		commitFeatureStr
-	}
-
-	if *setupStr != FRONTEND_APPS_BASE_DIR {
-		fmt.Println("Setting up Projects at default")
-		setUp()
+		commitFeatureCommand.Parse(os.Args[2:])
+	default:
+		fmt.Printf(doc)
 		os.Exit(0)
 	}
 
-	if *createFeatureStr {
-		input = buildInput(input, *branchStr, *reposStr)
+	if createFeatureCommand.Parsed() {
+		input = buildInput(input, *createBranchStr, *createReposStr)
 		input.command = "make-feature"
 	}
 
-	if *commitFeatureStr {
-		input = buildInput(input, *branchStr, *reposStr)
+	if commitFeatureCommand.Parsed() {
+		input = buildInput(input, *commitBranchStr, *commitReposStr)
 		input.command = "push-feature"
 	}
 
@@ -73,7 +78,7 @@ func buildInput(input Input, branch string, reposString string) Input {
 }
 
 var doc string = `
-pr-spin
+Gogo Github
 Create Branches and Generate PRs for mutliple repos. 
 
 Syntax: 
