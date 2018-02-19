@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"fmt"
 	"net/http"
 	"os"
@@ -12,6 +11,12 @@ import (
 var GH_BASE_URL string = "https://api.github.com/"
 
 func spinUpPr(opts RepoOpts) {
+	if len(os.Getenv("GITHUB_TOKEN")) == 0 {
+		fmt.Println("Git hub token not found as ENV var.")
+		fmt.Println("A Pr will not be generated")
+		os.Exit(0)
+	}
+
 	fmt.Println("Spinning up PR for " + opts.path)
 	access_token := os.Getenv("GITHUB_TOKEN")
 	path := "repos"
@@ -36,6 +41,6 @@ func spinUpPr(opts RepoOpts) {
 	res, err := client.Do(req)
 	check(err)
 
-	body, err := ioutil.ReadAll(res.Body)
-	fmt.Println(string(body)) 
+	code := res.StatusCode
+	fmt.Printf("API Returned HTTP STATUS CODE: %d\n ", code)
 }

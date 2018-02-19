@@ -36,12 +36,12 @@ func parse() Input {
 	}
 
 	switch os.Args[1] {
-	case "setup":
+	case "-setup":
 		setUp()
 		os.Exit(0)
-	case "make-feature":
+	case "-make-feature":
 		createFeatureCommand.Parse(os.Args[2:])
-	case "push-feature":
+	case "-push-feature":
 		commitFeatureCommand.Parse(os.Args[2:])
 	default:
 		fmt.Printf(doc)
@@ -49,16 +49,31 @@ func parse() Input {
 	}
 
 	if createFeatureCommand.Parsed() {
+		validParams(*createBranchStr, *createReposStr)
 		input = buildInput(input, *createBranchStr, *createReposStr)
 		input.command = "make-feature"
 	}
 
 	if commitFeatureCommand.Parsed() {
+		validParams(*commitBranchStr, *commitReposStr)
 		input = buildInput(input, *commitBranchStr, *commitReposStr)
 		input.command = "push-feature"
 	}
 
 	return input
+}
+
+func validParams(branch string, repos string) {
+	if branch == "" {
+		fmt.Println("Branch name is required to proceed.")
+		os.Exit(1)
+	}
+
+	if repos == "" {
+		fmt.Println("Repo Keys are required to proceed.")
+		os.Exit(1)
+	}
+
 }
 
 func buildInput(input Input, branch string, reposString string) Input {
