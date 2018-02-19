@@ -10,13 +10,13 @@ Token should be saved in GITHUB_TOKEN for it to work.
 
 Syntax: 
 SETUP: This will clone all the FE apps into ~/FRONT_END_APPS:
-pr-spin -setup y
+    pr-spin -setup y
 
 BUILD A FEATURE: This takes a branch name and keys to the repos you need initialized
-pr-spin -make-feature -branch feature/HTW-1111-fix-table -repos TW,FB,CT,SH
+    pr-spin -make-feature -branch feature/HTW-1111-fix-table -repos TW,FB,CT,SH
 
 PUSH A FEATURE
-pr-spin -push-feature -branch feature/HTW-1111-fix-table -repos TW,FB,CT,SH	
+    pr-spin -push-feature -branch feature/HTW-1111-fix-table -repos TW,FB,CT,SH	
 
 
 Commands:
